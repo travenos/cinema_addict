@@ -1,0 +1,35 @@
+<RCC>
+    <qresource prefix="/new/img">
+        <file>icons/application-exit.png</file>
+        <file>icons/chronometer.png</file>
+        <file>icons/document-open-folder.png</file>
+        <file>icons/edit-clear.png</file>
+        <file>icons/edit-delete.png</file>
+        <file>icons/media-playback-pause.png</file>
+        <file>icons/media-playback-start.png</file>
+        <file>icons/video-television.png</file>
+        <file>icons/video-x-generic.png</file>
+        <file>icons/view-fullscreen.png</file>
+        <file>icons/view-restore.png</file>
+        <file>icons/window-close.png</file>
+        <file>icons/edit-rename.png</file>
+        <file>icons/media-playback-stop.png</file>
+        <file>icons/task-recurring.png</file>
+        <file>icons/task-reject.png</file>
+        <file>icons/user-offline.png</file>
+        <file>icons/user-online.png</file>
+        <file>icons/view-media-playlist.png</file>
+        <file>icons/dialog-information.png</file>
+        <file>icons/document-edit.png</file>
+        <file>icons/flag-yellow.png</file>
+        <file>icons/get-hot-new-stuff.png</file>
+        <file>icons/kinopoisk.png</file>
+        <file>icons/qt-logo.png</file>
+        <file>icons/task-accepted.png</file>
+        <file>icons/edit-clear-list.png</file>
+        <file>qtbase_ru.qm</file>
+        <file>icons/audio-volume-medium.png</file>
+        <file>icons/audio-volume-muted.png</file>
+        <file>icons/media-playlist-shuffle.png</file>
+    </qresource>
+</RCC>

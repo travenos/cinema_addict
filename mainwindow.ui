@@ -1,0 +1,695 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1026</width>
+    <height>680</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Киноман</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="resource.qrc">
+    <normaloff>:/new/img/icons/video-television.png</normaloff>:/new/img/icons/video-television.png</iconset>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QHBoxLayout" name="horizontalLayout_7">
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
+      </property>
+      <widget class="QWidget" name="layoutWidget">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Поиск:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEdit"/>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QListWidget" name="listWidget">
+          <property name="focusPolicy">
+           <enum>Qt::StrongFocus</enum>
+          </property>
+          <property name="contextMenuPolicy">
+           <enum>Qt::ActionsContextMenu</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_Random">
+          <property name="text">
+           <string>Случайный фильм</string>
+          </property>
+          <property name="icon">
+           <iconset resource="resource.qrc">
+            <normaloff>:/new/img/icons/get-hot-new-stuff.png</normaloff>:/new/img/icons/get-hot-new-stuff.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBox">
+          <property name="text">
+           <string>Только из непросмотренных</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QGroupBox" name="groupBox">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="title">
+        <string>Информация</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <item>
+         <widget class="QSplitter" name="splitter_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="childrenCollapsible">
+           <bool>false</bool>
+          </property>
+          <widget class="QWidget" name="verticalLayoutWidget">
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_6">
+              <item>
+               <widget class="QVideoWidget2" name="graphicsView">
+                <property name="minimumSize">
+                 <size>
+                  <width>320</width>
+                  <height>240</height>
+                 </size>
+                </property>
+                <property name="contextMenuPolicy">
+                 <enum>Qt::ActionsContextMenu</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QVBoxLayout" name="verticalLayout">
+                <property name="spacing">
+                 <number>9</number>
+                </property>
+                <item>
+                 <widget class="QPushButton" name="pushButton_Play">
+                  <property name="text">
+                   <string>Предпросмотр</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="resource.qrc">
+                    <normaloff>:/new/img/icons/media-playback-start.png</normaloff>:/new/img/icons/media-playback-start.png</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_Mute">
+                  <property name="text">
+                   <string>Выключить звук</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="resource.qrc">
+                    <normaloff>:/new/img/icons/audio-volume-muted.png</normaloff>:/new/img/icons/audio-volume-muted.png</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_Random_2">
+                  <property name="text">
+                   <string>Случайный кадр</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="resource.qrc">
+                    <normaloff>:/new/img/icons/flag-yellow.png</normaloff>:/new/img/icons/flag-yellow.png</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_autoShow">
+                  <property name="text">
+                   <string>Случайные фрагменты</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="resource.qrc">
+                    <normaloff>:/new/img/icons/media-playlist-shuffle.png</normaloff>:/new/img/icons/media-playlist-shuffle.png</iconset>
+                  </property>
+                  <property name="checkable">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_fullScreen">
+                  <property name="text">
+                   <string>На весь экран</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="resource.qrc">
+                    <normaloff>:/new/img/icons/view-fullscreen.png</normaloff>:/new/img/icons/view-fullscreen.png</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="verticalSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_5">
+                  <item>
+                   <widget class="QTimeEdit" name="timeEdit">
+                    <property name="currentSection">
+                     <enum>QDateTimeEdit::HourSection</enum>
+                    </property>
+                    <property name="displayFormat">
+                     <string>h:mm:ss:zzz</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="pushButton_Position">
+                    <property name="text">
+                     <string>Позиция</string>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="resource.qrc">
+                      <normaloff>:/new/img/icons/chronometer.png</normaloff>:/new/img/icons/chronometer.png</iconset>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QSlider" name="horizontalSlider_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QTextBrowser" name="textBrowser">
+           <property name="palette">
+            <palette>
+             <active>
+              <colorrole role="Base">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>239</red>
+                 <green>235</green>
+                 <blue>231</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </active>
+             <inactive>
+              <colorrole role="Base">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>239</red>
+                 <green>235</green>
+                 <blue>231</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </inactive>
+             <disabled>
+              <colorrole role="Base">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>239</red>
+                 <green>235</green>
+                 <blue>231</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </disabled>
+            </palette>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+          </widget>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Моя оценка:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="horizontalSlider">
+            <property name="maximum">
+             <number>5</number>
+            </property>
+            <property name="sliderPosition">
+             <number>0</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_Mark">
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QPushButton" name="pushButton_Watch">
+            <property name="text">
+             <string>Смотреть</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resource.qrc">
+              <normaloff>:/new/img/icons/media-playback-start.png</normaloff>:/new/img/icons/media-playback-start.png</iconset>
+            </property>
+            <property name="autoDefault">
+             <bool>true</bool>
+            </property>
+            <property name="default">
+             <bool>true</bool>
+            </property>
+            <property name="flat">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_folder">
+            <property name="text">
+             <string>Открыть папку с фильмом</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resource.qrc">
+              <normaloff>:/new/img/icons/document-open-folder.png</normaloff>:/new/img/icons/document-open-folder.png</iconset>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_Kinopoisk">
+          <property name="text">
+           <string>Искать на Кинопоиске</string>
+          </property>
+          <property name="icon">
+           <iconset resource="resource.qrc">
+            <normaloff>:/new/img/icons/kinopoisk.png</normaloff>:/new/img/icons/kinopoisk.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QPushButton" name="pushButton_CheckWatched">
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
+            <property name="text">
+             <string>Отметить как просмотренный</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resource.qrc">
+              <normaloff>:/new/img/icons/user-offline.png</normaloff>:/new/img/icons/user-offline.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_Rejact">
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
+            <property name="text">
+             <string>Убрать из списка</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resource.qrc">
+              <normaloff>:/new/img/icons/task-reject.png</normaloff>:/new/img/icons/task-reject.png</iconset>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1026</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_Folder">
+    <property name="title">
+     <string>&amp;Папка</string>
+    </property>
+    <addaction name="action_Open"/>
+    <addaction name="action_Refresh"/>
+    <addaction name="action_sort"/>
+    <addaction name="separator"/>
+    <addaction name="action_Exit"/>
+   </widget>
+   <widget class="QMenu" name="menu_Help">
+    <property name="title">
+     <string>Справ&amp;ка</string>
+    </property>
+    <addaction name="action_About"/>
+    <addaction name="action_Qt"/>
+   </widget>
+   <widget class="QMenu" name="menu_Library">
+    <property name="title">
+     <string>&amp;Библиотека</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="action_RemovedFilms"/>
+    <addaction name="action_Database"/>
+    <addaction name="action_Clear"/>
+   </widget>
+   <widget class="QMenu" name="menu_Film">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="title">
+     <string>&amp;Фильм</string>
+    </property>
+    <addaction name="action_Watch"/>
+    <addaction name="action_Folder"/>
+    <addaction name="action_Rename"/>
+    <addaction name="action_Delete"/>
+    <addaction name="separator"/>
+    <addaction name="action_CheckWatched"/>
+    <addaction name="action_Reject"/>
+    <addaction name="separator"/>
+    <addaction name="action_Kinopoisk"/>
+   </widget>
+   <addaction name="menu_Folder"/>
+   <addaction name="menu_Film"/>
+   <addaction name="menu_Library"/>
+   <addaction name="menu_Help"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="action_Open">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/new/img/icons/document-open-folder.png</normaloff>:/new/img/icons/document-open-folder.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Открыть</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="action_Exit">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/new/img/icons/application-exit.png</normaloff>:/new/img/icons/application-exit.png</iconset>
+   </property>
+   <property name="text">
+    <string>В&amp;ыход</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="action_About">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/new/img/icons/dialog-information.png</normaloff>:/new/img/icons/dialog-information.png</iconset>
+   </property>
+   <property name="text">
+    <string>О &amp;программе</string>
+   </property>
+  </action>
+  <action name="action_Qt">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/new/img/icons/qt-logo.png</normaloff>:/new/img/icons/qt-logo.png</iconset>
+   </property>
+   <property name="text">
+    <string>О &amp;Qt</string>
+   </property>
+  </action>
+  <action name="action_Refresh">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/new/img/icons/task-recurring.png</normaloff>:/new/img/icons/task-recurring.png</iconset>
+   </property>
+   <property name="text">
+    <string>Об&amp;новить</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
+   </property>
+  </action>
+  <action name="action_RemovedFilms">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/new/img/icons/view-media-playlist.png</normaloff>:/new/img/icons/view-media-playlist.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Фильмы, убранные из списка</string>
+   </property>
+  </action>
+  <action name="action_Database">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/new/img/icons/document-edit.png</normaloff>:/new/img/icons/document-edit.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Редактировать библиотеку</string>
+   </property>
+  </action>
+  <action name="action_Clear">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/new/img/icons/edit-clear.png</normaloff>:/new/img/icons/edit-clear.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Очистить бибилиотеку</string>
+   </property>
+   <property name="toolTip">
+    <string>Очистить библиотеку</string>
+   </property>
+  </action>
+  <action name="action_Watch">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/new/img/icons/media-playback-start.png</normaloff>:/new/img/icons/media-playback-start.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Смотреть</string>
+   </property>
+  </action>
+  <action name="action_Rename">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/new/img/icons/edit-rename.png</normaloff>:/new/img/icons/edit-rename.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Переименовать</string>
+   </property>
+  </action>
+  <action name="action_Delete">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/new/img/icons/edit-delete.png</normaloff>:/new/img/icons/edit-delete.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Удалить</string>
+   </property>
+  </action>
+  <action name="action_Reject">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/new/img/icons/task-reject.png</normaloff>:/new/img/icons/task-reject.png</iconset>
+   </property>
+   <property name="text">
+    <string>У&amp;брать из списка</string>
+   </property>
+  </action>
+  <action name="action_CheckWatched">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/new/img/icons/user-offline.png</normaloff>:/new/img/icons/user-offline.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Отметить как просмотренный</string>
+   </property>
+  </action>
+  <action name="action_Kinopoisk">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/new/img/icons/kinopoisk.png</normaloff>:/new/img/icons/kinopoisk.png</iconset>
+   </property>
+   <property name="text">
+    <string>Искать на &amp;Кинопоиске</string>
+   </property>
+  </action>
+  <action name="action_sort">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Сортировать по &amp;алфавиту</string>
+   </property>
+  </action>
+  <action name="action_Folder">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/new/img/icons/document-open-folder.png</normaloff>:/new/img/icons/document-open-folder.png</iconset>
+   </property>
+   <property name="text">
+    <string>Открыть п&amp;апку с фильмом</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QVideoWidget2</class>
+   <extends>QGraphicsView</extends>
+   <header>qvideowidget2.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>action_CheckWatched</sender>
+   <signal>triggered()</signal>
+   <receiver>pushButton_CheckWatched</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>551</x>
+     <y>262</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>action_Kinopoisk</sender>
+   <signal>triggered()</signal>
+   <receiver>pushButton_Kinopoisk</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>636</x>
+     <y>232</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>action_Reject</sender>
+   <signal>triggered()</signal>
+   <receiver>pushButton_Rejact</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>551</x>
+     <y>291</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>action_Watch</sender>
+   <signal>triggered()</signal>
+   <receiver>pushButton_Watch</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>467</x>
+     <y>232</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>action_Folder</sender>
+   <signal>triggered()</signal>
+   <receiver>pushButton_folder</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>873</x>
+     <y>699</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
