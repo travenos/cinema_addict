@@ -2,13 +2,13 @@
 #include "ui_mainwindow.h"
 
 //Перегрузка оператора << для структуры filmList
-QDataStream &operator<<(QDataStream &out, const filmList &fl)
+QDataStream &operator<<(QDataStream &out, const FilmInfo &fl)
 {
     out<<fl.direcroty<<fl.movie<<fl.watched<<fl.rejected<<fl.mark;
     return out;
 }
 //Перегрузка оператора >> для структуры filmList
-QDataStream &operator>>(QDataStream &in, filmList &fl)
+QDataStream &operator>>(QDataStream &in, FilmInfo &fl)
 {
     in>>fl.direcroty>>fl.movie>>fl.watched>>fl.rejected>>fl.mark;
     return in;
@@ -24,83 +24,83 @@ MainWindow::MainWindow(QWidget *parent) :
     {
         srand(time(0));
 #if (defined __linux__)
-        progDir.setPath(QDir::homePath()+QDir::separator()+".cinemaSettings");
+        m_progDir.setPath(QDir::homePath()+QDir::separator()+".cinemaSettings");
 #else
 #if (defined __WIN32__ || defined __WIN64__)
         progDir.setPath(QDir::homePath()+"/Application Data/cinemaSettings");
 #endif
 #endif
-        if (!progDir.exists())
-            progDir.mkpath(progDir.path());
-        dataFile.setFileName(progDir.path()+QDir::separator()+"database.cin");
-        if (dataFile.exists())
+        if (!m_progDir.exists())
+            m_progDir.mkpath(m_progDir.path());
+        m_dataFile.setFileName(m_progDir.path()+QDir::separator()+"database.cin");
+        if (m_dataFile.exists())
         {
-            dataFile.open(QIODevice::ReadOnly);
-            QDataStream in(&dataFile);
-            in>>database;
-            dataFile.close();
+            m_dataFile.open(QIODevice::ReadOnly);
+            QDataStream in(&m_dataFile);
+            in>>m_database;
+            m_dataFile.close();
         }
-        rw=new RejWindow(this,&database);
-        db=new DBWindow(this, &database);
-        connect(rw,SIGNAL(changed()),this,SLOT(on_action_Refresh_triggered()));
-        connect(db,SIGNAL(changed()),this,SLOT(on_action_Refresh_triggered()));
-        player=new QMediaPlayer;
-        player->setVideoOutput(ui->graphicsView);
-        connect(player,SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),this,SLOT(filmInfo(QMediaPlayer::MediaStatus)));
-        connect(player,SIGNAL(positionChanged(qint64)),this,SLOT(changedPos(qint64)));
+        m_rejWin=new RejWindow(this,&m_database);
+        m_dbWin=new DBWindow(this, &m_database);
+        connect(m_rejWin,SIGNAL(changed()),this,SLOT(on_action_Refresh_triggered()));
+        connect(m_dbWin,SIGNAL(changed()),this,SLOT(on_action_Refresh_triggered()));
+        m_player=new QMediaPlayer;
+        m_player->setVideoOutput(ui->graphicsView);
+        connect(m_player,SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),this,SLOT(filmInfo(QMediaPlayer::MediaStatus)));
+        connect(m_player,SIGNAL(positionChanged(qint64)),this,SLOT(changedPos(qint64)));
         connect(ui->graphicsView,SIGNAL(changeFS()),this,SLOT(on_pushButton_fullScreen_clicked()));
         connect(ui->graphicsView,SIGNAL(playPause()),this,SLOT(on_pushButton_Play_clicked()));
-        act_play_pause=new QAction(QIcon(":/new/img/icons/media-playback-start.png"),"Воспроизведение",this);
-        connect(act_play_pause,SIGNAL(triggered()),this,SLOT(on_pushButton_Play_clicked()));
-        ui->graphicsView->addAction(act_play_pause);
-        act_stop=new QAction(QIcon(":/new/img/icons/media-playback-stop.png"),"Стоп",this);
-        connect(act_stop,SIGNAL(triggered()),this,SLOT(on_listWidget_itemSelectionChanged()));
-        ui->graphicsView->addAction(act_stop);
-        act_mute=new QAction(QIcon(":/new/img/icons/audio-volume-muted.png"),"Выключить звук",this);
-        connect(act_mute,SIGNAL(triggered()),this,SLOT(on_pushButton_Mute_clicked()));
-        ui->graphicsView->addAction(act_mute);
-        act_fullScreenOn=new QAction(QIcon(":/new/img/icons/view-fullscreen.png"),"На весь экран",this);
-        connect(act_fullScreenOn,SIGNAL(triggered()),this,SLOT(on_pushButton_fullScreen_clicked()));
-        ui->graphicsView->addAction(act_fullScreenOn);
+        m_act_play_pause=new QAction(QIcon(":/new/img/icons/media-playback-start.png"),"Воспроизведение",this);
+        connect(m_act_play_pause,SIGNAL(triggered()),this,SLOT(on_pushButton_Play_clicked()));
+        ui->graphicsView->addAction(m_act_play_pause);
+        m_act_stop=new QAction(QIcon(":/new/img/icons/media-playback-stop.png"),"Стоп",this);
+        connect(m_act_stop,SIGNAL(triggered()),this,SLOT(on_listWidget_itemSelectionChanged()));
+        ui->graphicsView->addAction(m_act_stop);
+        m_act_mute=new QAction(QIcon(":/new/img/icons/audio-volume-muted.png"),"Выключить звук",this);
+        connect(m_act_mute,SIGNAL(triggered()),this,SLOT(on_pushButton_Mute_clicked()));
+        ui->graphicsView->addAction(m_act_mute);
+        m_act_fullScreenOn=new QAction(QIcon(":/new/img/icons/view-fullscreen.png"),"На весь экран",this);
+        connect(m_act_fullScreenOn,SIGNAL(triggered()),this,SLOT(on_pushButton_fullScreen_clicked()));
+        ui->graphicsView->addAction(m_act_fullScreenOn);
 
         ui->listWidget->addActions(this->ui->menu_Film->actions());
 
-        timer=new QTimer;
-        connect(timer,SIGNAL(timeout()),this,SLOT(on_pushButton_Random_2_clicked()));
-        timer->setInterval(3000);
-        timer->stop();
+        m_timer=new QTimer;
+        connect(m_timer,SIGNAL(timeout()),this,SLOT(on_pushButton_Random_2_clicked()));
+        m_timer->setInterval(3000);
+        m_timer->stop();
 
         ui->listWidget->setContextMenuPolicy(Qt::NoContextMenu);       
-        lastDir=QDir::home();
-        setFile.setFileName(progDir.path()+QDir::separator()+"settings.cin");     
-        if (setFile.exists())
+        m_lastDir=QDir::home();
+        m_setFile.setFileName(m_progDir.path()+QDir::separator()+"settings.cin");
+        if (m_setFile.exists())
         {
-            setFile.open(QIODevice::ReadOnly);
-            QDataStream in(&setFile);
+            m_setFile.open(QIODevice::ReadOnly);
+            QDataStream in(&m_setFile);
             bool onlyWatched=true;
             bool sortEnabled=false;
             bool muted=false;
             QString lastDirPath=QDir::homePath();
             in>>lastDirPath>>onlyWatched>>sortEnabled>>muted;
-            lastDir.setPath(lastDirPath);
+            m_lastDir.setPath(lastDirPath);
             ui->checkBox->setChecked(onlyWatched);
             ui->action_sort->setChecked(sortEnabled);
-            player->setMuted(muted);
+            m_player->setMuted(muted);
             if (muted)
             {
                 ui->pushButton_Mute->setText("Включить звук");
                 ui->pushButton_Mute->setIcon(QIcon(":/new/img/icons/audio-volume-medium.png"));
-                act_mute->setText("Включить звук");
-                act_mute->setIcon(QIcon(":/new/img/icons/audio-volume-medium.png"));
+                m_act_mute->setText("Включить звук");
+                m_act_mute->setIcon(QIcon(":/new/img/icons/audio-volume-medium.png"));
             }
             else
             {
                 ui->pushButton_Mute->setText("Выключить звук");
                 ui->pushButton_Mute->setIcon(QIcon(":/new/img/icons/audio-volume-muted.png"));
-                act_mute->setText("Выключить звук");
-                act_mute->setIcon(QIcon(":/new/img/icons/audio-volume-muted.png"));
+                m_act_mute->setText("Выключить звук");
+                m_act_mute->setIcon(QIcon(":/new/img/icons/audio-volume-muted.png"));
             }
-            setFile.close();
+            m_setFile.close();
         }
 
     }
@@ -114,35 +114,35 @@ MainWindow::MainWindow(QWidget *parent) :
 //Деструктор главной формы
 MainWindow::~MainWindow()
 {    
-    player->stop();
-    if (!progDir.exists())
-        progDir.mkpath(progDir.path());
-    dataFile.open(QIODevice::WriteOnly);
-    QDataStream out(&dataFile);
-    out<<database;
-    dataFile.close();
-    setFile.open(QIODevice::WriteOnly);
-    QDataStream out2(&setFile);
-    out2<<filmsDir.path()<<ui->checkBox->isChecked()<<ui->action_sort->isChecked()<<player->isMuted();
-    setFile.close();
-    rw->deleteLater();
-    db->deleteLater();
-    player->deleteLater();
-    act_play_pause->deleteLater();
-    act_stop->deleteLater();
-    act_mute->deleteLater();
-    act_fullScreenOn->deleteLater();
-    timer->deleteLater();
+    m_player->stop();
+    if (!m_progDir.exists())
+        m_progDir.mkpath(m_progDir.path());
+    m_dataFile.open(QIODevice::WriteOnly);
+    QDataStream out(&m_dataFile);
+    out<<m_database;
+    m_dataFile.close();
+    m_setFile.open(QIODevice::WriteOnly);
+    QDataStream out2(&m_setFile);
+    out2<<m_filmsDir.path()<<ui->checkBox->isChecked()<<ui->action_sort->isChecked()<<m_player->isMuted();
+    m_setFile.close();
+    delete m_rejWin;
+    delete m_dbWin;
+    delete m_player;
+    delete m_act_play_pause;
+    delete m_act_stop;
+    delete m_act_mute;
+    delete m_act_fullScreenOn;
+    delete m_timer;
     delete ui;
 }
 
 //Открытие папки с фильмами
 void MainWindow::on_action_Open_triggered()
 {
-    QString newDir=QFileDialog::getExistingDirectory(this,"Выберите папку с фильмами",filmsDir.path());
+    QString newDir=QFileDialog::getExistingDirectory(this,"Выберите папку с фильмами",m_filmsDir.path());
     if (!newDir.isEmpty())
     {
-        filmsDir.setPath(newDir);
+        m_filmsDir.setPath(newDir);
         on_action_Refresh_triggered();
         ui->action_Refresh->setEnabled(true);
     }
@@ -154,39 +154,39 @@ void MainWindow::on_action_Refresh_triggered()
     try
     {
         QString title;
-        if (filmsDir==QDir::root())
+        if (m_filmsDir==QDir::root())
             title="root – Киноман";
         else
-           title=filmsDir.dirName()+" – Киноман";
+           title=m_filmsDir.dirName()+" – Киноман";
         this->setWindowTitle(title);
-        films.clear();
-        player->setMedia(NULL);
+        m_films.clear();
+        m_player->setMedia(NULL);
         ui->listWidget->clear();
-        dirCount=0;
-        progress=new QProgressDialog(this);
-        progress->setModal(true);
-        progress->setWindowTitle("Идёт поиск фильмов:");
-        progress->setMinimumHeight(200);
-        progress->setMinimumWidth(800);
-        label=new QLabel;
-        label->setText("Подсчёт количества вложенных папок");
-        label->setWordWrap(true);
-        progress->setLabel(label);
-        progress->show();
-        countD(filmsDir);
-        progress->setMinimum(0);
-        progress->setMaximum(dirCount);
-        curDirNumber=0;
-        search(filmsDir);
+        m_dirCount=0;
+        m_progressWin=new QProgressDialog(this);
+        m_progressWin->setModal(true);
+        m_progressWin->setWindowTitle("Идёт поиск фильмов:");
+        m_progressWin->setMinimumHeight(200);
+        m_progressWin->setMinimumWidth(800);
+        m_label=new QLabel;
+        m_label->setText("Подсчёт количества вложенных папок");
+        m_label->setWordWrap(true);
+        m_progressWin->setLabel(m_label);
+        m_progressWin->show();
+        countD(m_filmsDir);
+        m_progressWin->setMinimum(0);
+        m_progressWin->setMaximum(m_dirCount);
+        m_curDirNumber=0;
+        search(m_filmsDir);
         if(ui->action_sort->isChecked())
         {
             sort();
         }
-        for (int i=0;i<=films.count()-1;i++)
+        for (int i=0;i<=m_films.count()-1;i++)
         {
-            ui->listWidget->addItem(database[films[i]].movie);
+            ui->listWidget->addItem(m_database[m_films[i]].movie);
             ui->listWidget->item(i)->setIcon(QIcon(":/new/img/icons/video-x-generic.png"));
-            if (database[films[i]].watched)
+            if (m_database[m_films[i]].watched)
             {
                 QColor color;
                 color.setRgb(128,128,128);
@@ -206,11 +206,11 @@ void MainWindow::on_action_Refresh_triggered()
             QMessageBox::warning(this,"Ошибка","Неизвестная ошибка");
             break;
         }
-        films.clear();
+        m_films.clear();
         ui->listWidget->clear();
     }
-    progress->deleteLater();
-    label->deleteLater();
+    m_progressWin->deleteLater();
+    m_label->deleteLater();
     if (ui->listWidget->count()==0)
     {
         ui->listWidget->clearSelection();
@@ -224,16 +224,16 @@ void MainWindow::on_action_Refresh_triggered()
     {
         ui->listWidget->setCurrentRow(0);
         ui->groupBox->setEnabled(true);
-        ui->statusBar->showMessage("Найдено фильмов в выбранной папке: "+QString::number(films.count()));
+        ui->statusBar->showMessage("Найдено фильмов в выбранной папке: "+QString::number(m_films.count()));
     }
 }
 
 //Рекурсивный метод подсчёта количества папок
-void MainWindow::countD(QDir workdir)
+void MainWindow::countD(const QDir& workdir)
 {
-    if (progress->wasCanceled())
+    if (m_progressWin->wasCanceled())
         throw 1;
-    if (++dirCount==1000)
+    if (++m_dirCount==1000)
         if(QMessageBox::question(this,"Слишком большая папка","Папка слишком большая. Её сканирование может занять много времени. Продолжить?")==QMessageBox::No)
             throw 2;
     QStringList subDirs;
@@ -255,19 +255,19 @@ void MainWindow::countD(QDir workdir)
 }
 
 //Рекурсивный метод поиска фильмов в папке
-void MainWindow::search(QDir workdir)
+void MainWindow::search(const QDir& workdir)
 {
 
-    if (progress->wasCanceled())
+    if (m_progressWin->wasCanceled())
         throw 2;
-    label->setText(workdir.path());
-    curDirNumber++;
-    progress->setValue(curDirNumber);
+    m_label->setText(workdir.path());
+    m_curDirNumber++;
+    m_progressWin->setValue(m_curDirNumber);
     QStringList nameFilters;
     QStringList currentFilms;
     currentFilms.clear();
     nameFilters.clear();
-    filmList currentFilm;      //Информация о текущем фильме
+    FilmInfo currentFilm;      //Информация о текущем фильме
     nameFilters<<"*.avi"<<"*.mkv"<<"*.mp4"<<"*.mpg"<<"*.mpeg"<<"*.ogv"<<"*.wmv";
     nameFilters<<"*.flv"<<"*.m4v"<<"*.3gp"<<"*.mov"<<"*.webm"<<"*.avf"<<"*.divx"<<"*.f4v";
     currentFilms=workdir.entryList(nameFilters);
@@ -280,16 +280,16 @@ void MainWindow::search(QDir workdir)
             currentFilm.rejected=false;
             currentFilm.mark=0;
             int j=0;
-            for (j=0;j<=database.count()-1;j++)
+            for (j=0;j<=m_database.count()-1;j++)
             {
-                if (database[j].movie==currentFilms[i])
-                    if (database[j].direcroty==currentFilm.direcroty)
+                if (m_database[j].movie==currentFilms[i])
+                    if (m_database[j].direcroty==currentFilm.direcroty)
                         break;
             }
-            if (j==database.count())
-                database.push_back(currentFilm);
-            if (!database[j].rejected)
-                films.push_back(j);
+            if (j==m_database.count())
+                m_database.push_back(currentFilm);
+            if (!m_database[j].rejected)
+                m_films.push_back(j);
         }
     QStringList subDirs;
     subDirs=workdir.entryList(QDir::Dirs|QDir::NoSymLinks);
@@ -334,15 +334,15 @@ void MainWindow::on_pushButton_Watch_clicked()
     {
         if (!ui->listWidget->currentIndex().isValid())
             throw 0;
-        if (player->state()==QMediaPlayer::PlayingState)
-            player->pause();
+        if (m_player->state()==QMediaPlayer::PlayingState)
+            m_player->pause();
         ui->pushButton_Play->setText("Предпросмотр");
         ui->pushButton_Play->setIcon(QIcon(":/new/img/icons/media-playback-start.png"));
-        act_play_pause->setText("Воспроизведение");
-        act_play_pause->setIcon(QIcon(":/new/img/icons/media-playback-start.png"));
+        m_act_play_pause->setText("Воспроизведение");
+        m_act_play_pause->setIcon(QIcon(":/new/img/icons/media-playback-start.png"));
         int p=ui->listWidget->currentIndex().row();
-        QDesktopServices::openUrl(QUrl::fromLocalFile(database[films[p]].direcroty+QDir::separator()+database[films[p]].movie));
-        if (!database[films[p]].watched)
+        QDesktopServices::openUrl(QUrl::fromLocalFile(m_database[m_films[p]].direcroty+QDir::separator()+m_database[m_films[p]].movie));
+        if (!m_database[m_films[p]].watched)
             on_pushButton_CheckWatched_clicked();
         ui->statusBar->showMessage("Открытие фильма в медиаплеере по умолчанию...",3000);
     }
@@ -360,17 +360,17 @@ void MainWindow::on_pushButton_Random_clicked()
 {
     try
     {
-        if (films.isEmpty())
+        if (m_films.isEmpty())
             throw 0;
         long randFilm;
         if (!ui->checkBox->isChecked())
-            randFilm=rand()%films.count();
+            randFilm=rand()%m_films.count();
         else
         {
             QVector<int> unWatched;
-            for(int i=0;i<=films.count()-1;i++)
+            for(int i=0;i<=m_films.count()-1;i++)
             {
-                if(!database[films[i]].watched)
+                if(!m_database[m_films[i]].watched)
                     unWatched.push_back(i);
             }
             if (unWatched.isEmpty())
@@ -392,17 +392,17 @@ void MainWindow::on_pushButton_CheckWatched_clicked()
         if (!ui->listWidget->currentIndex().isValid())
             throw 0;
         int p=ui->listWidget->currentIndex().row();
-        database[films[p]].watched=!database[films[p]].watched;
+        m_database[m_films[p]].watched=!m_database[m_films[p]].watched;
         QColor color;
-        if (database[films[p]].watched)
+        if (m_database[m_films[p]].watched)
             color.setRgb(128,128,128);
         else
             color.setRgb(0,0,0);
         ui->listWidget->item(p)->setTextColor(color);
-        ui->pushButton_CheckWatched->setText((database[films[p]].watched)?"Отметить как не просмотренный":"Отметить как просмотренный");
-        ui->action_CheckWatched->setText((database[films[p]].watched)?"Отметить как не просмотренный":"Отметить как просмотренный");
-        ui->pushButton_CheckWatched->setIcon(QIcon((database[films[p]].watched)?":/new/img/icons/user-online.png":":/new/img/icons/user-offline.png"));
-        ui->action_CheckWatched->setIcon(QIcon((database[films[p]].watched)?":/new/img/icons/user-online.png":":/new/img/icons/user-offline.png"));
+        ui->pushButton_CheckWatched->setText((m_database[m_films[p]].watched)?"Отметить как не просмотренный":"Отметить как просмотренный");
+        ui->action_CheckWatched->setText((m_database[m_films[p]].watched)?"Отметить как не просмотренный":"Отметить как просмотренный");
+        ui->pushButton_CheckWatched->setIcon(QIcon((m_database[m_films[p]].watched)?":/new/img/icons/user-online.png":":/new/img/icons/user-offline.png"));
+        ui->action_CheckWatched->setIcon(QIcon((m_database[m_films[p]].watched)?":/new/img/icons/user-online.png":":/new/img/icons/user-offline.png"));
     }
     catch(...){QMessageBox::warning(this,"Ошибка","Невозможно отметить");}
 }
@@ -413,21 +413,21 @@ void MainWindow::on_listWidget_itemSelectionChanged()
 {
     ui->pushButton_autoShow->setChecked(false);
     on_pushButton_autoShow_clicked(false);
-    if (ui->listWidget->currentIndex().isValid() && ui->listWidget->count()==films.count())
+    if (ui->listWidget->currentIndex().isValid() && ui->listWidget->count()==m_films.count())
     {
         ui->menu_Film->setEnabled(true);
         ui->listWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
         ui->textBrowser->clear();
         int p=ui->listWidget->currentRow();
         QString info;
-        info=database[films[p]].movie+"\nПапка: ";
-        info+=database[films[p]].direcroty;
+        info=m_database[m_films[p]].movie+"\nПапка: ";
+        info+=m_database[m_films[p]].direcroty;
 
         //Размер файла
         QString fileName("");
-        fileName+=database[films[p]].direcroty;
+        fileName+=m_database[m_films[p]].direcroty;
         fileName+=QDir::separator();
-        fileName+=database[films[p]].movie;
+        fileName+=m_database[m_films[p]].movie;
         QFile film(fileName);
         double fSize=film.size();
         int va=0;
@@ -463,19 +463,19 @@ void MainWindow::on_listWidget_itemSelectionChanged()
         }
 
         ui->textBrowser->setText(info);
-        player->setMedia(QUrl::fromLocalFile(fileName));
+        m_player->setMedia(QUrl::fromLocalFile(fileName));
 
 
-        ui->pushButton_CheckWatched->setText((database[films[p]].watched)?"Отметить как не просмотренный":"Отметить как просмотренный");
-        ui->action_CheckWatched->setText((database[films[p]].watched)?"Отметить как не просмотренный":"Отметить как просмотренный");        
-        ui->pushButton_CheckWatched->setIcon(QIcon((database[films[p]].watched)?":/new/img/icons/user-online.png":":/new/img/icons/user-offline.png"));
-        ui->action_CheckWatched->setIcon(QIcon((database[films[p]].watched)?":/new/img/icons/user-online.png":":/new/img/icons/user-offline.png"));
+        ui->pushButton_CheckWatched->setText((m_database[m_films[p]].watched)?"Отметить как не просмотренный":"Отметить как просмотренный");
+        ui->action_CheckWatched->setText((m_database[m_films[p]].watched)?"Отметить как не просмотренный":"Отметить как просмотренный");
+        ui->pushButton_CheckWatched->setIcon(QIcon((m_database[m_films[p]].watched)?":/new/img/icons/user-online.png":":/new/img/icons/user-offline.png"));
+        ui->action_CheckWatched->setIcon(QIcon((m_database[m_films[p]].watched)?":/new/img/icons/user-online.png":":/new/img/icons/user-offline.png"));
         ui->pushButton_Play->setText("Предпросмотр");
         ui->pushButton_Play->setIcon(QIcon(":/new/img/icons/media-playback-start.png"));
-        act_play_pause->setText("Воспроизведение");
-        act_play_pause->setIcon(QIcon(":/new/img/icons/media-playback-start.png"));
-        ui->horizontalSlider->setValue(database[films[p]].mark);
-        ui->label_Mark->setText((database[films[p]].mark>0)?QString::number(database[films[p]].mark):"-");
+        m_act_play_pause->setText("Воспроизведение");
+        m_act_play_pause->setIcon(QIcon(":/new/img/icons/media-playback-start.png"));
+        ui->horizontalSlider->setValue(m_database[m_films[p]].mark);
+        ui->label_Mark->setText((m_database[m_films[p]].mark>0)?QString::number(m_database[m_films[p]].mark):"-");
 
     }
     else
@@ -491,7 +491,7 @@ void MainWindow::on_pushButton_Kinopoisk_clicked()
 {
     QString adress("http://www.kinopoisk.ru/index.php?first=no&what=&kp_query=");;
     int p=ui->listWidget->currentRow();
-    adress+=database[films[p]].movie;
+    adress+=m_database[m_films[p]].movie;
     adress.remove(adress.lastIndexOf("."),adress.length()-adress.lastIndexOf("."));
     QDesktopServices::openUrl(QUrl(adress));
     ui->statusBar->showMessage("Поиск фильма на сайте \"Кинопоиск\" по имени файла...",3000);
@@ -501,7 +501,7 @@ void MainWindow::on_pushButton_Kinopoisk_clicked()
 void MainWindow::on_horizontalSlider_valueChanged(int value)
 {
     int p=ui->listWidget->currentRow();
-    database[films[p]].mark=value;
+    m_database[m_films[p]].mark=value;
     ui->label_Mark->setText((value>0)?QString::number(value):"-");
 }
 
@@ -513,7 +513,7 @@ void MainWindow::on_pushButton_Rejact_clicked()
         if (!ui->listWidget->currentIndex().isValid())
             throw 0;
         int p=ui->listWidget->currentRow();
-        database[films[p]].rejected=true;
+        m_database[m_films[p]].rejected=true;
         on_action_Refresh_triggered();
         if(p<=ui->listWidget->count()-1)
         {
@@ -526,15 +526,15 @@ void MainWindow::on_pushButton_Rejact_clicked()
 //Открытие окна редактирования убранных из списка фильмов
 void MainWindow::on_action_RemovedFilms_triggered()
 {
-    rw->show();
-    rw->raise();
+    m_rejWin->show();
+    m_rejWin->raise();
 }
 
 //Открытие окна редактирования библиотеки
 void MainWindow::on_action_Database_triggered()
 {
-    db->show();
-    db->raise();
+    m_dbWin->show();
+    m_dbWin->raise();
 }
 
 //Поиск по списку фильмов
@@ -560,15 +560,15 @@ void MainWindow::on_action_Rename_triggered()
         int p=ui->listWidget->currentRow();
         QString path;
         QString name;
-        path=database[films[p]].direcroty+QDir::separator();
+        path=m_database[m_films[p]].direcroty+QDir::separator();
         bool accept=false;
-        name=QInputDialog::getText(this,"Переименовать фильм","Введите новое имя",QLineEdit::Normal,database[films[p]].movie,&accept);
+        name=QInputDialog::getText(this,"Переименовать фильм","Введите новое имя",QLineEdit::Normal,m_database[m_films[p]].movie,&accept);
         path+=name;
         if(accept)
         {
-            if (!QFile(database[films[p]].direcroty+QDir::separator()+database[films[p]].movie).rename(path))
+            if (!QFile(m_database[m_films[p]].direcroty+QDir::separator()+m_database[m_films[p]].movie).rename(path))
                 throw 0;
-            database[films[p]].movie=name;
+            m_database[m_films[p]].movie=name;
             ui->listWidget->item(p)->setText(name);
             on_listWidget_itemSelectionChanged();
         }
@@ -589,10 +589,10 @@ void MainWindow::on_action_Delete_triggered()
             if (!ui->listWidget->currentIndex().isValid())
                 throw 0;
             int p=ui->listWidget->currentRow();
-            if (!QFile(database[films[p]].direcroty+QDir::separator()+database[films[p]].movie).remove())
+            if (!QFile(m_database[m_films[p]].direcroty+QDir::separator()+m_database[m_films[p]].movie).remove())
                 throw 0;
-            database.remove(p);
-            films.clear();
+            m_database.remove(p);
+            m_films.clear();
             on_action_Refresh_triggered();
             if (ui->listWidget->count()-1>=p)
                 ui->listWidget->setCurrentRow(p);
@@ -609,15 +609,15 @@ void MainWindow::filmInfo(QMediaPlayer::MediaStatus status)
         QString metaInfo("");
         QString temp("");
         //Название из метаданных
-        temp=player->metaData(QMediaMetaData::Title).toString();
+        temp=m_player->metaData(QMediaMetaData::Title).toString();
         if (!temp.isEmpty())
             metaInfo=metaInfo+"\nНазвание: "+temp;
         //Жанр
-        temp=player->metaData(QMediaMetaData::Genre).toString();
+        temp=m_player->metaData(QMediaMetaData::Genre).toString();
         if (!temp.isEmpty())
             metaInfo=metaInfo+"\nЖанр: "+temp;
         //Длина мультимедиа
-        qint64 t=player->duration();
+        qint64 t=m_player->duration();
         int ms=t%1000; //Милисекунды
         t/=1000;
         QString sec("0");   //Секунды
@@ -635,24 +635,24 @@ void MainWindow::filmInfo(QMediaPlayer::MediaStatus status)
         metaInfo=metaInfo+"\nПродолжительность: "+QString::number(t)+":"+min+":"+sec;
         //Разрешение видео
         QSize s;
-        s=player->metaData(QMediaMetaData::Resolution).toSize();
+        s=m_player->metaData(QMediaMetaData::Resolution).toSize();
         if(!s.isEmpty())
         {
             metaInfo=metaInfo+"\nРазрешение: "+QString::number(s.width())+"x"+QString::number(s.height());
         }
         //Название видеокодека
         temp.clear();
-        temp=player->metaData(QMediaMetaData::VideoCodec).toString();
+        temp=m_player->metaData(QMediaMetaData::VideoCodec).toString();
         if (!temp.isEmpty())
             metaInfo=metaInfo+"\nВидеодек: "+temp;
         //Название аудиокодека
         temp.clear();
-        temp=player->metaData(QMediaMetaData::AudioCodec).toString();
+        temp=m_player->metaData(QMediaMetaData::AudioCodec).toString();
         if (!temp.isEmpty())
             metaInfo=metaInfo+"\nАудиоодек: "+temp;
         //Название контейнера
         temp.clear();
-        temp=player->metaData("container-format").toString();
+        temp=m_player->metaData("container-format").toString();
         if (!temp.isEmpty())
             metaInfo=metaInfo+"\nКонтейнер: "+temp;
 
@@ -661,11 +661,11 @@ void MainWindow::filmInfo(QMediaPlayer::MediaStatus status)
         ui->graphicsView->setVisible(true);
         ui->graphicsView->repaint();
 
-        player->setPosition(0);
-        player->pause();
+        m_player->setPosition(0);
+        m_player->pause();
 
         ui->horizontalSlider_2->setValue(0);
-        ui->horizontalSlider_2->setMaximum(player->duration());
+        ui->horizontalSlider_2->setMaximum(m_player->duration());
 
         ui->pushButton_Position->setEnabled(true);
         ui->pushButton_Random_2->setEnabled(true);
@@ -677,14 +677,14 @@ void MainWindow::filmInfo(QMediaPlayer::MediaStatus status)
     }
     else
     {
-        if(status==QMediaPlayer::EndOfMedia && player->media()!=NULL)
+        if(status==QMediaPlayer::EndOfMedia && m_player->media()!=NULL)
         {
 
            on_listWidget_itemSelectionChanged();
         }
         else
         {
-            if(status==QMediaPlayer::InvalidMedia || player->media()==NULL)
+            if(status==QMediaPlayer::InvalidMedia || m_player->media()==NULL)
             {
 
                 ui->pushButton_Position->setEnabled(false);
@@ -699,17 +699,17 @@ void MainWindow::filmInfo(QMediaPlayer::MediaStatus status)
                     QString temp("");
                     //Название видеокодека
                     temp.clear();
-                    temp=player->metaData(QMediaMetaData::VideoCodec).toString();
+                    temp=m_player->metaData(QMediaMetaData::VideoCodec).toString();
                     if (!temp.isEmpty())
-                        metaInfo=metaInfo+"\nВидеодек: "+temp;
+                        metaInfo=metaInfo+"\nВидеокодек: "+temp;
                     //Название аудиокодека
                     temp.clear();
-                    temp=player->metaData(QMediaMetaData::AudioCodec).toString();
+                    temp=m_player->metaData(QMediaMetaData::AudioCodec).toString();
                     if (!temp.isEmpty())
-                        metaInfo=metaInfo+"\nАудиоодек: "+temp;
+                        metaInfo=metaInfo+"\nАудиокодек: "+temp;
                     //Название контейнера
                     temp.clear();
-                    temp=player->metaData("container-format").toString();
+                    temp=m_player->metaData("container-format").toString();
                     if (!temp.isEmpty())
                         metaInfo=metaInfo+"\nКонтейнер: "+temp;
                     ui->textBrowser->setText(ui->textBrowser->toPlainText()+metaInfo);
@@ -726,16 +726,16 @@ void MainWindow::on_pushButton_Play_clicked()
 {
     if (ui->pushButton_autoShow->isChecked())
         return;
-    if (player->media()==NULL && ui->listWidget->currentIndex().isValid())
+    if (m_player->media()==NULL && ui->listWidget->currentIndex().isValid())
     {
         int p=ui->listWidget->currentRow();
-        player->setMedia(QUrl::fromLocalFile(database[films[p]].direcroty+QDir::separator()+database[films[p]].movie));
-        player->play();
+        m_player->setMedia(QUrl::fromLocalFile(m_database[m_films[p]].direcroty+QDir::separator()+m_database[m_films[p]].movie));
+        m_player->play();
         ui->pushButton_Play->setText("Остановить");
-        act_play_pause->setText("Пауза");
+        m_act_play_pause->setText("Пауза");
 
         ui->pushButton_Play->setIcon(QIcon(":/new/img/icons/media-playback-pause.png"));
-        act_play_pause->setIcon(QIcon(":/new/img/icons/media-playback-pause.png"));
+        m_act_play_pause->setIcon(QIcon(":/new/img/icons/media-playback-pause.png"));
 
         ui->pushButton_Position->setEnabled(true);
         ui->pushButton_Random_2->setEnabled(true);
@@ -746,23 +746,23 @@ void MainWindow::on_pushButton_Play_clicked()
         ui->pushButton_Play->setEnabled(true);
     }
     else
-        if (player->state()==QMediaPlayer::PausedState)
+        if (m_player->state()==QMediaPlayer::PausedState)
         {
-            player->play();
+            m_player->play();
             ui->pushButton_Play->setText("Остановить");          
-            act_play_pause->setText("Пауза");
+            m_act_play_pause->setText("Пауза");
 
             ui->pushButton_Play->setIcon(QIcon(":/new/img/icons/media-playback-pause.png"));
-            act_play_pause->setIcon(QIcon(":/new/img/icons/media-playback-pause.png"));
+            m_act_play_pause->setIcon(QIcon(":/new/img/icons/media-playback-pause.png"));
         }
         else
-            if (player->state()==QMediaPlayer::PlayingState)
+            if (m_player->state()==QMediaPlayer::PlayingState)
             {
-                player->pause();
+                m_player->pause();
                 ui->pushButton_Play->setText("Предпросмотр");         
-                act_play_pause->setText("Воспроизведение");
+                m_act_play_pause->setText("Воспроизведение");
                 ui->pushButton_Play->setIcon(QIcon(":/new/img/icons/media-playback-start.png"));
-                act_play_pause->setIcon(QIcon(":/new/img/icons/media-playback-start.png"));
+                m_act_play_pause->setIcon(QIcon(":/new/img/icons/media-playback-start.png"));
             }
             else
                 QMessageBox::warning(this,"Ошибка","Невозможно воспроизвести");
@@ -786,7 +786,7 @@ void MainWindow::changedPos(qint64 pos)
 //Изменение позиции видео со слайдером
 void MainWindow::on_horizontalSlider_2_sliderReleased()
 {
-    player->setPosition(ui->horizontalSlider_2->value());
+    m_player->setPosition(ui->horizontalSlider_2->value());
 }
 
 //Изменение позиции видео вручную
@@ -794,8 +794,8 @@ void MainWindow::on_pushButton_Position_clicked()
 {
     qint64 pos;
     pos=ui->timeEdit->time().hour()*3600000+ui->timeEdit->time().minute()*60000+ui->timeEdit->time().second()*1000+ui->timeEdit->time().msec();
-    if (pos<=player->duration())
-        player->setPosition(pos);
+    if (pos<=m_player->duration())
+        m_player->setPosition(pos);
     else
         QMessageBox::warning(this,"Ошибка","Позиция не найдена");
 }
@@ -806,36 +806,55 @@ void MainWindow::on_pushButton_Random_2_clicked()
     qint64 temp=1;
     if (RAND_MAX<32400000)
       temp=32400000/RAND_MAX+1;
-    qint64 randPos=(rand()*temp)%player->duration();
-    player->setPosition(randPos);
+    if (m_player->duration() > 0)
+    {
+        qint64 randPos=(rand()*temp)%m_player->duration();
+        m_player->setPosition(randPos);
+    }
 }
 
 //Предпросмотр на весь экран
 void MainWindow::on_pushButton_fullScreen_clicked()
 {
-    if(player->state()==QMediaPlayer::PausedState)
-        on_pushButton_Play_clicked();
-    fw=new QVideoWidgetP;
-    fw->setContextMenuPolicy(Qt::ActionsContextMenu);
-    fw->addAction(act_play_pause);
-    fw->addAction(act_mute);
-    act_fullScreenOff=new QAction(QIcon(":/new/img/icons/view-restore.png"),"Выйти из полноэкранного режима",fw);
-    connect(act_fullScreenOff,SIGNAL(triggered()),fw,SLOT(deleteLater()));
-    fw->addAction(act_fullScreenOff);
-    connect(fw,SIGNAL(destroyed()),this,SLOT(closeFSPreview()));
-    connect(fw,SIGNAL(playPause()),this,SLOT(on_pushButton_Play_clicked()));
-    player->setVideoOutput(fw);
-    fw->showFullScreen();
-
+    QMediaContent media = m_player->media();
+    QMediaPlayer::State state = m_player->state();
+    qint64 position = m_player->position();
+    fullScreenVideo=new QVideoWidgetP;
+    fullScreenVideo->setParent(this, Qt::Tool | Qt::CustomizeWindowHint | Qt::FramelessWindowHint );
+    fullScreenVideo->setContextMenuPolicy(Qt::ActionsContextMenu);
+    fullScreenVideo->addAction(m_act_play_pause);
+    fullScreenVideo->addAction(m_act_mute);
+    m_act_fullScreenOff=new QAction(QIcon(":/new/img/icons/view-restore.png"),"Выйти из полноэкранного режима",fullScreenVideo);
+    connect(m_act_fullScreenOff,SIGNAL(triggered()),fullScreenVideo,SLOT(deleteLater()));
+    fullScreenVideo->addAction(m_act_fullScreenOff);
+    connect(fullScreenVideo,SIGNAL(destroyed()),this,SLOT(closeFSPreview()));
+    connect(fullScreenVideo,SIGNAL(playPause()),this,SLOT(on_pushButton_Play_clicked()));
+    fullScreenVideo->showFullScreen();
+    m_player->setVideoOutput(fullScreenVideo);
+    m_player->setMedia(media);
+    m_player->pause();
+    m_player->setPosition(position);
+    if (state == QMediaPlayer::PlayingState)
+    {
+        m_player->play();
+    }
 }
 
 //Выход из полноэкранного предпросмотра
 void MainWindow::closeFSPreview()
 {
-    if(player->state()==QMediaPlayer::PausedState)
-        on_pushButton_Play_clicked();
-    act_fullScreenOff->deleteLater();
-    player->setVideoOutput(ui->graphicsView);
+    m_act_fullScreenOff->deleteLater();
+    QMediaContent media = m_player->media();
+    QMediaPlayer::State state = m_player->state();
+    qint64 position = m_player->position();
+    m_player->setVideoOutput(ui->graphicsView);
+    m_player->setMedia(media);
+    m_player->pause();
+    m_player->setPosition(position);
+    if (state == QMediaPlayer::PlayingState)
+    {
+        m_player->play();
+    }
 }
 
 //Очистка библиотеки
@@ -843,25 +862,31 @@ void MainWindow::on_action_Clear_triggered()
 {
     if(QMessageBox::question(this,"Очистить библиотеку","Вы уверены, что хотите полностью очистить все данные о ваших фильмах?")==QMessageBox::Yes)
     {
-        database.clear();
-        dataFile.remove();
+        m_database.clear();
+        m_dataFile.remove();
         on_action_Refresh_triggered();
     }
 }
 
-//Сортировка списка фильмов методом выборочной сортировки
+//Сортировка списка фильмов
 void MainWindow::sort()
 {
-    for (int i=0;i<=films.count()-1;i++)
+    struct Sorter
     {
-        int minIndex=i;
-        for(int j=i;j<=films.count()-1;j++)
-            if(database[films[j]].movie<database[films[minIndex]].movie)
-                minIndex=j;
-        int temp=films[minIndex];
-        films[minIndex]=films[i];
-        films[i]=temp;
-    }
+        Sorter(const QVector<FilmInfo>& database) :
+            m_filmsDatabase(database)
+        {}
+
+        bool operator()(int filmId1, int filmId2) const
+        {
+            return m_filmsDatabase[filmId1].movie < m_filmsDatabase[filmId2].movie;
+        }
+
+    private:
+        const QVector<FilmInfo>& m_filmsDatabase;
+    };
+
+    std::sort(m_films.begin(), m_films.end(), Sorter(m_database));
 }
 
 //Сортировка по требованию пользователя
@@ -871,11 +896,11 @@ void MainWindow::on_action_sort_triggered(bool checked)
     {
         sort();
         ui->listWidget->clear();
-        for (int i=0;i<=films.count()-1;i++)
+        for (int i=0;i<=m_films.count()-1;i++)
         {
-            ui->listWidget->addItem(database[films[i]].movie);
+            ui->listWidget->addItem(m_database[m_films[i]].movie);
             ui->listWidget->item(i)->setIcon(QIcon(":/new/img/icons/video-x-generic.png"));
-            if (database[films[i]].watched)
+            if (m_database[m_films[i]].watched)
             {
                 QColor color;
                 color.setRgb(128,128,128);
@@ -893,28 +918,27 @@ void MainWindow::on_pushButton_folder_clicked()
         if (!ui->listWidget->currentIndex().isValid())
             throw 0;
         int p=ui->listWidget->currentRow();
-        QDesktopServices::openUrl(QUrl::fromLocalFile(database[films[p]].direcroty));
+        QDesktopServices::openUrl(QUrl::fromLocalFile(m_database[m_films[p]].direcroty));
         ui->statusBar->showMessage("Открытие папки с фильмом...",3000);
     }
     catch(...){QMessageBox::warning(this,"Ошибка","Невозможно открыть папку");}
 }
 
 //Открытие папки при запуске
-void MainWindow::setDir(QDir *&dir)
+void MainWindow::setDir(const QDir* dir)
 {
     if(dir!=NULL)
     {
         if (dir->exists())
-            filmsDir=*dir;
+            m_filmsDir=*dir;
         else
         {
             QMessageBox::warning(this,"Ошибка","Неверно указано имя папки");
-            filmsDir=lastDir;
+            m_filmsDir = m_lastDir;
         }
-        delete dir;
     }
     else
-        filmsDir=lastDir;
+        m_filmsDir = m_lastDir;
     ui->action_Refresh->setEnabled(true);
     on_action_Refresh_triggered();
 }
@@ -922,20 +946,20 @@ void MainWindow::setDir(QDir *&dir)
 //Включение/выключение звука в предпросмотре
 void MainWindow::on_pushButton_Mute_clicked()
 {
-    player->setMuted(!player->isMuted());
-    if (player->isMuted())
+    m_player->setMuted(!m_player->isMuted());
+    if (m_player->isMuted())
     {
         ui->pushButton_Mute->setText("Включить звук");
         ui->pushButton_Mute->setIcon(QIcon(":/new/img/icons/audio-volume-medium.png"));
-        act_mute->setText("Включить звук");
-        act_mute->setIcon(QIcon(":/new/img/icons/audio-volume-medium.png"));
+        m_act_mute->setText("Включить звук");
+        m_act_mute->setIcon(QIcon(":/new/img/icons/audio-volume-medium.png"));
     }
     else
     {
         ui->pushButton_Mute->setText("Выключить звук");
         ui->pushButton_Mute->setIcon(QIcon(":/new/img/icons/audio-volume-muted.png"));
-        act_mute->setText("Выключить звук");
-        act_mute->setIcon(QIcon(":/new/img/icons/audio-volume-muted.png"));
+        m_act_mute->setText("Выключить звук");
+        m_act_mute->setIcon(QIcon(":/new/img/icons/audio-volume-muted.png"));
     }
 }
 
@@ -945,18 +969,18 @@ void MainWindow::on_pushButton_autoShow_clicked(bool checked)
     if(checked)
     {
         on_pushButton_Random_2_clicked();
-        player->play();
-        timer->start();
+        m_player->play();
+        m_timer->start();
     }
     else
     {
-        player->pause();
-        timer->stop();
+        m_player->pause();
+        m_timer->stop();
     }
     ui->pushButton_Play->setEnabled(!checked);
-    act_play_pause->setEnabled(!checked);
+    m_act_play_pause->setEnabled(!checked);
     ui->pushButton_Play->setText("Предпросмотр");
-    act_play_pause->setText("Воспроизведение");
+    m_act_play_pause->setText("Воспроизведение");
     ui->pushButton_Play->setIcon(QIcon(":/new/img/icons/media-playback-start.png"));
-    act_play_pause->setIcon(QIcon(":/new/img/icons/media-playback-start.png"));
+    m_act_play_pause->setIcon(QIcon(":/new/img/icons/media-playback-start.png"));
 }

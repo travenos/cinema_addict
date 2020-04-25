@@ -1,7 +1,9 @@
 #include "rejwindow.h"
 #include "ui_rejwindow.h"
 
-RejWindow::RejWindow(QWidget *parent, QVector<filmList> *db) :
+#include <QAction>
+
+RejWindow::RejWindow(QWidget *parent, QVector<FilmInfo> *db) :
     QDialog(parent),
     ui(new Ui::RejWindow)
 {
@@ -12,10 +14,10 @@ RejWindow::RejWindow(QWidget *parent, QVector<filmList> *db) :
 
 RejWindow::~RejWindow()
 {
-    act_rename->deleteLater();
-    act_remove->deleteLater();
-    act_checkWatched->deleteLater();
-    act_checkRejected->deleteLater();
+    delete act_rename;
+    delete act_remove;
+    delete act_checkWatched;
+    delete act_checkRejected;
     delete ui;
 }
 
@@ -41,7 +43,7 @@ void RejWindow::on_pushButton_Restore_clicked()
         {
             if (ui->listWidget->item(i)->isSelected())
             {
-                filmList f=database->operator [](films[i]);
+                FilmInfo f=database->operator [](films[i]);
                 f.rejected=false;
                 database->replace(films[i],f);
             }
@@ -94,7 +96,7 @@ void RejWindow::rename_trigered()
                 {
                     if (!QFile(database->operator [](films[i]).direcroty+QDir::separator()+database->operator [](films[i]).movie).rename(path))
                         throw 0;
-                    filmList temp=database->operator [](films[i]);
+                    FilmInfo temp=database->operator [](films[i]);
                     temp.movie=name;
                     database->replace(films[i],temp);
                     ui->listWidget->item(i)->setText(name);
@@ -139,7 +141,7 @@ void RejWindow::checkWatched_trigered()
     {
         if (ui->listWidget->item(i)->isSelected())
         {
-            filmList temp=database->operator [](films[i]);
+            FilmInfo temp=database->operator [](films[i]);
             temp.watched=!temp.watched;
             database->replace(films[i],temp);
         }
@@ -155,7 +157,7 @@ void RejWindow::checkRejected_trigered()
     {
         if (ui->listWidget->item(i)->isSelected())
         {
-            filmList temp=database->operator [](films[i]);
+            FilmInfo temp=database->operator [](films[i]);
             temp.rejected=!temp.rejected;
             database->replace(films[i],temp);
         }

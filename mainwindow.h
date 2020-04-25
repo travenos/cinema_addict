@@ -30,7 +30,7 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
-    void setDir(QDir * &dir);
+    void setDir(const QDir* dir);
     ~MainWindow();
 
 
@@ -99,37 +99,37 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    void search(QDir workdir);     //Рекурсивный метод поиска фильмов
-    void countD(QDir workdir);     //Рекурсивный метод подсчёта количества вложенных папок
+    void search(const QDir& workdir);     //Рекурсивный метод поиска фильмов
+    void countD(const QDir& workdir);     //Рекурсивный метод подсчёта количества вложенных папок
     void sort();                     //Сортировка списка фильмов по алфавиту
 
-    QVector<int> films;   //Список фильмов
-    QVector<filmList> database;   //База данных когда либо открытых фильмов
-    QDir progDir;               //Папка со служебными файлами программы
-    QFile dataFile;             //Файл с библиотекой фильмов
-    QFile setFile;              //Файл с настройками программы
-    QDir lastDir;               //Папка, открытая при предыдущем запуске
-    QDir filmsDir;              //Папка с фильмами
-    int dirCount;               //Количество вложенных папок
-    int curDirNumber;           //Количество просканированных вложенных папок
-    RejWindow *rw;              //Окно с фильмами, убранными из списка
-    DBWindow *db;               //Окно с базой данных фильмов
-    QProgressDialog *progress;  //Окно прогресса сканирования папок
-    QLabel *label;              //Надпись в окне сканирования
+    QVector<int> m_films;   //Список фильмов
+    QVector<FilmInfo> m_database;   //База данных когда либо открытых фильмов
+    QDir m_progDir;               //Папка со служебными файлами программы
+    QFile m_dataFile;             //Файл с библиотекой фильмов
+    QFile m_setFile;              //Файл с настройками программы
+    QDir m_lastDir;               //Папка, открытая при предыдущем запуске
+    QDir m_filmsDir;              //Папка с фильмами
+    int m_dirCount;               //Количество вложенных папок
+    int m_curDirNumber;           //Количество просканированных вложенных папок
+    RejWindow *m_rejWin;              //Окно с фильмами, убранными из списка
+    DBWindow *m_dbWin;               //Окно с базой данных фильмов
+    QProgressDialog *m_progressWin;  //Окно прогресса сканирования папок
+    QLabel *m_label;              //Надпись в окне сканирования
 
 
-    QMediaPlayer *player;   //Видеоплеер
+    QMediaPlayer *m_player;   //Видеоплеер
 
-    QVideoWidgetP *fw;      //Виджет для отображения видео во весь экран
+    QVideoWidgetP *fullScreenVideo;      //Виджет для отображения видео во весь экран
 
-    QTimer *timer;          //Таймер для автоматического предпросмотра
+    QTimer *m_timer;          //Таймер для автоматического предпросмотра
 
     //Контекстное меню для видеовиджетов
-    QAction *act_play_pause;
-    QAction *act_stop;
-    QAction *act_fullScreenOn;
-    QAction *act_fullScreenOff;
-    QAction *act_mute;
+    QAction *m_act_play_pause;
+    QAction *m_act_stop;
+    QAction *m_act_fullScreenOn;
+    QAction *m_act_fullScreenOff;
+    QAction *m_act_mute;
 };
 
 #endif // MAINWINDOW_H

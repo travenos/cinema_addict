@@ -1,7 +1,9 @@
 #include "dbwindow.h"
 #include "ui_rejwindow.h"
 
-DBWindow::DBWindow(QWidget *parent,  QVector<filmList> *db) :
+#include <QAction>
+
+DBWindow::DBWindow(QWidget *parent,  QVector<FilmInfo> *db) :
     RejWindow(parent,db)
 {
     ui->pushButton_Restore->setText("Убрать из библиотеки");
@@ -60,5 +62,5 @@ void DBWindow::on_pushButton_Restore_clicked()
 
 DBWindow::~DBWindow()
 {
-    delFDB->deleteLater();
+    delete delFDB;
 }

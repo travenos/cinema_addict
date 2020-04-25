@@ -15,20 +15,25 @@ void QVideoWidgetP::keyPressEvent(QKeyEvent* event)
         emit playPause();
 }
 
-void QVideoWidgetP::mouseDoubleClickEvent(QMouseEvent * event)
+void QVideoWidgetP::mouseDoubleClickEvent(QMouseEvent* event)
 {
     deleteLater();
+    if (event->button()==Qt::LeftButton)
+    {
+        emit playPause();
+    }
 }
 
 void QVideoWidgetP::mousePressEvent(QMouseEvent * event)
 {
     if (event->button()==Qt::LeftButton && event->type()!=QEvent::MouseButtonDblClick)
     {
-    emit playPause();
+        emit playPause();
     }
 }
 
 void QVideoWidgetP::closeEvent(QCloseEvent* event)
 {
+    event->ignore();
     deleteLater();
 }

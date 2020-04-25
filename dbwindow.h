@@ -4,15 +4,11 @@
 #include "rejwindow.h"
 #include <QDialog>
 
-//namespace Ui {
-//class DBWindow;
-//}
-
 class DBWindow : public RejWindow
 {
     Q_OBJECT
 public:
-    explicit DBWindow(QWidget *parent = 0, QVector<filmList> *db = NULL);
+    explicit DBWindow(QWidget *parent = 0, QVector<FilmInfo> *db = NULL);
     ~DBWindow();
 
 protected:
@@ -28,11 +24,6 @@ private slots:
 
 private:
     QAction *delFDB;
-
-//private:
- //   Ui::DBWindow *ui;
-
-
 };
 
 #endif // DBWINDOW_H

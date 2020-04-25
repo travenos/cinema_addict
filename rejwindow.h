@@ -7,12 +7,13 @@
 #include <QDir>
 #include <QMessageBox>
 
-struct filmList{    //Информация о фильме
+struct FilmInfo //Информация о фильме
+{
     QString direcroty;  //Папка с фильмом
     QString movie;  //Имя файла фильма
-    bool watched;   //Просмотрен ли фильм
     int mark;       //Оценка фильму
     bool rejected;  //Удалён ли фильм из списка
+    bool watched;   //Просмотрен ли фильм
 };
 
 namespace Ui {
@@ -24,14 +25,14 @@ class RejWindow : public QDialog
     Q_OBJECT
 
 public:
-    explicit RejWindow(QWidget *parent = 0, QVector<filmList> *db = NULL);
+    explicit RejWindow(QWidget *parent = 0, QVector<FilmInfo> *db = NULL);
     ~RejWindow();
 
 protected:
     void showEvent(QShowEvent *event);
     Ui::RejWindow *ui;
 
-    QVector<filmList> *database;
+    QVector<FilmInfo> *database;
     QVector<int> films;
 
 private slots:
