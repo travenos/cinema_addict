@@ -644,12 +644,12 @@ void MainWindow::filmInfo(QMediaPlayer::MediaStatus status)
         temp.clear();
         temp=m_player->metaData(QMediaMetaData::VideoCodec).toString();
         if (!temp.isEmpty())
-            metaInfo=metaInfo+"\nВидеодек: "+temp;
+            metaInfo=metaInfo+"\nВидеокодек: "+temp;
         //Название аудиокодека
         temp.clear();
         temp=m_player->metaData(QMediaMetaData::AudioCodec).toString();
         if (!temp.isEmpty())
-            metaInfo=metaInfo+"\nАудиоодек: "+temp;
+            metaInfo=metaInfo+"\nАудиокодек: "+temp;
         //Название контейнера
         temp.clear();
         temp=m_player->metaData("container-format").toString();
