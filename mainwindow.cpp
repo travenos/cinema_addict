@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
         m_progDir.setPath(QDir::homePath()+QDir::separator()+".cinemaSettings");
 #else
 #if (defined __WIN32__ || defined __WIN64__)
-        progDir.setPath(QDir::homePath()+"/Application Data/cinemaSettings");
+        m_progDir.setPath(QDir::homePath()+"/Application Data/cinemaSettings");
 #endif
 #endif
         if (!m_progDir.exists())
