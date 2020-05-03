@@ -70,8 +70,8 @@ MainWindow::MainWindow(QWidget *parent) :
         m_timer->setInterval(3000);
         m_timer->stop();
 
-        ui->listWidget->setContextMenuPolicy(Qt::NoContextMenu);       
-        m_lastDir=QDir::home();
+        ui->listWidget->setContextMenuPolicy(Qt::NoContextMenu);
+        m_lastDir = QStandardPaths::writableLocation(QStandardPaths::MoviesLocation);
         m_setFile.setFileName(m_progDir.path()+QDir::separator()+"settings.cin");
         if (m_setFile.exists())
         {
